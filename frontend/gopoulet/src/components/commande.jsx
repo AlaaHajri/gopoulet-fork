@@ -1,34 +1,52 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import commonStyles from '../styles/commonStyles'; // Importez vos styles communs
+import io from 'socket.io-client';
+import commonStyles from '../styles/commonStyles';
 
 const Commande = () => {
   const [orderStatus, setOrderStatus] = useState('en attente');
   const [orderId, setOrderId] = useState('');
+  const [qrCodeData, setQrCodeData] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    const storedOrderId = sessionStorage.getItem('orderId');
-    setOrderId(storedOrderId); // Sauvegardez l'ID de commande dans l'état
+    const socket = io('http://localhost:3000'); // Replace with your server URL
+    const storedOrderId = location.state?.orderId || sessionStorage.getItem('orderId');
+    const storedQrCodeData = location.state?.qrCodeData || sessionStorage.getItem('qrCodeData');
+
+    setOrderId(storedOrderId);
+    setQrCodeData(storedQrCodeData);
 
     if (storedOrderId) {
-      axios.get(`http://localhost:3000/orders/${storedOrderId}`)
-        .then(response => {
-          setOrderStatus(response.data.status); // Mettez à jour le statut de la commande
-        })
-        .catch(error => {
-          console.error('Erreur lors de la récupération du statut de la commande:', error);
-        });
+      socket.emit('joinOrderRoom', storedOrderId);
+
+      socket.on('orderStatusChanged', (data) => {
+        if (data.orderId === storedOrderId) {
+          setOrderStatus(data.newStatus);
+          alert('Order status updated!');
+        }
+      });
+
+      return () => {
+        socket.off('orderStatusChanged');
+        socket.disconnect();
+      };
     }
-  }, []);
+  }, [location, navigate]);
 
   return (
     <div style={commonStyles.pageContainer}>
       <div style={commonStyles.contentContainer}>
         <h1>Statut de la commande</h1>
-        <p>Statut : {orderStatus}</p>
+        <p>Statut : {orderStatus}</p> {/* Display the order status */}
         {orderId && <p>ID de la commande : {orderId}</p>}
+        {qrCodeData ? (
+          <img src={qrCodeData} alt="QR Code" style={commonStyles.qrCodeImage} />
+        ) : (
+          <p>Loading QR Code...</p>
+        )}
         <button style={commonStyles.button} onClick={() => navigate('/')}>
           Retour à l'accueil
         </button>

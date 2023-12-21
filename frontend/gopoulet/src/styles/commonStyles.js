@@ -1,151 +1,115 @@
-// src/styles/commonStyles.js
 const commonStyles = {
-    pageContainer: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '100vh',
-      width: '100vw',
-      backgroundColor: '#141414',
+  pageContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh',
+    width: '100vw',
+    backgroundColor: '#f7f7f7', // Light grey background for a modern look
+    fontFamily: `'Open Sans', sans-serif`, // Modern, readable font
+  },
+  contentContainer: {
+    padding: '20px',
+    backgroundColor: '#fff',
+    borderRadius: '10px',
+    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.05)',
+    maxWidth: '400px',
+    textAlign: 'center',
+    color: '#333', // Slightly softer than pure black for text
+  },
+  image: {
+    maxWidth: '70%',
+    marginBottom: '1.25em',
+  },
+  logo: {
+    maxWidth: '40%',
+    marginBottom: '1.25em',
+  },
+  textHeader: {
+    margin: '0',
+    fontSize: '24px', // Slightly larger for impact
+    color: '#333',
+    fontWeight: 'bold',
+    lineHeight: '1.2', // Modern typography focuses on line spacing
+  },
+  text: {
+    margin: '0',
+    fontSize: '16px', // Standard size for readability
+    color: '#666', // Softer for body text
+  },
+  button: {
+    marginTop: '20px',
+    padding: '12px 24px',
+    fontSize: '16px',
+    color: '#fff',
+    backgroundColor: '#ffc404', // More vibrant button color
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    transition: 'transform 0.3s ease', // Smooth transition for interactive elements
+    '&:hover': {
+      transform: 'scale(1.05)', // Slight grow effect on hover
     },
-    contentContainer: {
-      padding: '20px',
-      backgroundColor: '#fff',
-      borderRadius: '10px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-      maxWidth: '400px',
-      textAlign: 'center',
-      color: '#141414',
-    },
-    image: {
-      maxWidth: '70%',
-      marginBottom: '1.25em',
-    },
-    logo : {
-      maxWidth: '40%',
-      marginBottom: '1.25em',
-    },
-    textHeader: {
-      margin: '0',
-      fontSize: '18px',
-      color: '#141414',
-      fontWeight: 'bold',
-    },
-    text: {
-      margin: '0',
-      fontSize: '14px',
-      color: '#555',
-    },
-    button: {
-      marginTop: '10px', // Reduced spacing
-      padding: '10px 20px',
-      fontSize: '16px',
-      color: '#fff',
-      backgroundColor: '#4CAF50',
-      border: 'none',
-      borderRadius: '5px',
-      cursor: 'pointer',
-      width: '100%', // Make the button full-width
-      boxSizing: 'border-box', // Include padding and border in the width
-    },
-    input: {
-      padding: '10px',
-      margin: '10px 0', // Adjusted spacing
-      fontSize: '16px',
-      border: '1px solid #ddd',
-      borderRadius: '5px',
-      width: '100%', // Make the input full-width
-      boxSizing: 'border-box', // Include padding and border in the width
-    },
-    statusMessage: {
-      padding: '10px',
-      margin: '10px 0', // Adjusted spacing
-      borderRadius: '5px',
-      backgroundColor: '#f2f2f2',
-      fontSize: '16px',
-      color: '#141414',
-    },
-    // Styles for the list of session orders
-    sessionOrdersList: {
-      listStyle: 'none',
-      padding: '0',
-      margin: '10px 0', // Adjusted spacing
-    },
-    sessionOrderItem: {
-      padding: '5px',
-      borderBottom: '1px solid #ddd',
-      fontSize: '16px',
-      color: '#141414',
-    },
-    restaurateurPage: {
-      padding: '20px',
-      fontFamily: 'Arial, sans-serif',
-    },
+  },
+  input: {
+    padding: '12px',
+    margin: '20px 0',
+    fontSize: '16px',
+    border: '1px solid #ccc',
+    borderRadius: '8px',
+    width: '100%',
+    boxSizing: 'border-box',
+  },
+  statusMessage: {
+    padding: '10px',
+    margin: '10px 0',
+    borderRadius: '8px',
+    backgroundColor: '#ffc404', // Light blue for informational messages
+    fontSize: '16px',
+    color: '#333',
+  },
+  qrCodeImage: {
+    width: '150px', // Example width, adjust as needed
+    height: '150px', // Example height, adjust as needed
+    marginTop: '10px',
+  },
+  restaurateurPage: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '15em',
+    fontFamily: 'Arial, sans-serif',
+    backgroundColor: '#191414', // Couleur de fond plus claire pour un look moderne
+    minHeight: '20vh', // Hauteur pour prendre tout l'espace vertical
+  },
+  
+    // Mise à jour des styles de la table
     table: {
       width: '100%',
       borderCollapse: 'collapse',
-      backgroundColor: '#141414', // Fond blanc cassé
-      borderRadius: '8px', // Bords arrondis
-      overflow: 'hidden', // Pour appliquer le border-radius au tableau
-      boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', // Ombre légère pour un aspect moderne
+      margin: '20px 0', // Ajout d'un peu d'espace autour de la table
+      boxShadow: '0 10px 20px rgba(0,0,0,0.12)', // Ombre portée pour un effet de profondeur
+      borderRadius: '10px', // Coins arrondis pour la table
+      overflow: 'hidden', // Cache les bordures sur les côtés arrondis
     },
+  
     th: {
-      background: '#4CAF50',
-      color: 'white',
-      padding: '15px 10px',
+      backgroundColor: '#005f73', // Couleur foncée pour les en-têtes
+      color: '#ffffff',
+      padding: '15px',
+      fontSize: '16px', // Taille de police ajustée
+      fontWeight: '600', // Police un peu plus épaisse
     },
+  
     td: {
-      border: '1px solid #ddd',
-      padding: '10px',
-      textAlign: 'center',
+      backgroundColor: '#ffffff', // Fond blanc pour les cellules
+      color: '#333333', // Couleur de texte foncée pour le contraste
+      padding: '12px 15px',
+      fontSize: '14px',
+      borderBottom: '1px solid #dddddd', // Bordures subtiles pour séparer les lignes
     },
-    button: {
-      margin: '5px',
-      padding: '10px 15px',
-      border: 'none',
-      borderRadius: '5px',
-      cursor: 'pointer',
-      transition: 'background-color 0.3s ease', // Transition pour les interactions de bouton
-    },
-    deleteButton: {
-      backgroundColor: '#ff6347',
-    },
-    input: {
-      padding: '10px',
-      margin: '10px 0', // Ajoute un peu d'espace autour de l'input
-      fontSize: '16px', // Taille de la police pour une meilleure lisibilité
-      border: '1px solid #ddd', // Une bordure subtile
-      borderRadius: '5px', // Bordures arrondies pour l'input
-      width: 'calc(100% - 22px)', // 100% de la largeur du conteneur parent moins la bordure et le padding
-      boxSizing: 'border-box', // Pour inclure le padding et la bordure dans la largeur
-    },
-    
-    // Amélioration du bouton pour consulter le statut
-    checkStatusButton: {
-      padding: '10px 20px',
-      fontSize: '16px',
-      color: '#fff',
-      backgroundColor: '#3498db', // Une couleur différente pour le bouton de statut
-      border: 'none',
-      borderRadius: '5px',
-      cursor: 'pointer',
-      marginTop: '10px',
-      width: '100%', // Le bouton prend toute la largeur
-      boxSizing: 'border-box',
-      transition: 'background-color 0.3s ease',
-    },
-    
-    // Styles pour le message de statut
-    statusMessage: {
-      padding: '10px',
-      margin: '10px 0',
-      borderRadius: '5px',
-      backgroundColor: '#f2f2f2', // Fond subtil pour le message de statut
-      fontSize: '16px',
-      color: '#141414',
-    },
-  };
-  
-  export default commonStyles;
-  
+};
+
+export default commonStyles;

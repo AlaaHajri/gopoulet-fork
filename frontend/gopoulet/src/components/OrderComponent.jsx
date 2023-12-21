@@ -13,26 +13,43 @@ const OrderComponent = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showLogin, setShowLogin] = useState(false);
+  const [orders, setOrders] = useState([]);
 
+  useEffect(() => {
+    // Récupérer les commandes de sessionStorage ou des cookies au chargement du composant
+    const storedOrders = JSON.parse(sessionStorage.getItem('orders') || '[]');
+    const cookieOrders = JSON.parse(Cookies.get('orders') || '[]');
+    setOrders([...new Set([...storedOrders, ...cookieOrders])]); // Merge and remove duplicates
+  }, []);
 
   const handleOrderClick = () => {
     axios.post('http://localhost:3000/orders')
       .then(response => {
-        const orderId = response.data.uuid;
-        console.log('Commande créée:', orderId);
+        // Log the entire response to see what data is included
+        console.log('Order creation response:', response.data);
   
-        // Stocker l'ID de la commande dans sessionStorage
-        let orders = sessionStorage.getItem('orders');
-        orders = orders ? JSON.parse(orders) : [];
-        orders.push(orderId);
-        sessionStorage.setItem('orders', JSON.stringify(orders));
+        const { uuid } = response.data.order; // Correctly getting the UUID from the response
+        const qrCode = response.data.qrCode; // QR Code is directly on response.data
+        console.log('QR Code Data URL:', qrCode); // Log the QR Code data URL
   
-        navigate('/commande');
+        // Update state, sessionStorage, and cookies with the new order ID and QR code
+        let updatedOrders = [...orders, uuid];
+        setOrders(updatedOrders);
+        sessionStorage.setItem('orders', JSON.stringify(updatedOrders));
+        Cookies.set('orders', JSON.stringify(updatedOrders));
+        
+        // Save the QR code data URL to sessionStorage
+        sessionStorage.setItem('qrCodeData', qrCode);
+  
+        navigate('/commande', { state: { orderId: uuid, qrCodeData: qrCode } }); // Pass orderId and qrCodeData to the commande route
       })
       .catch(error => {
         console.error('Erreur lors de la création de la commande:', error);
       });
   };
+  
+  
+
   const handleStatusCheck = () => {
     if (orderNumber) {
       axios.get(`http://localhost:3000/orders/${orderNumber}`)
@@ -44,6 +61,7 @@ const OrderComponent = () => {
         });
     }
   };
+
   const handleLogin = (event) => {
     event.preventDefault();
     axios.post('http://localhost:3000/login', { username, password })
@@ -56,29 +74,7 @@ const OrderComponent = () => {
         // Gérer les erreurs d'authentification
       });
   };
-  const [orders, setOrders] = useState([]);
 
-  useEffect(() => {
-    // Récupérer les commandes de sessionStorage au chargement du composant
-    const storedOrders = sessionStorage.getItem('orders');
-    if (storedOrders) {
-      setOrders(JSON.parse(storedOrders));
-    }
-
-    // Récupérer les commandes des cookies
-    const ordersFromCookie = Cookies.get('orders');
-    if (ordersFromCookie) {
-      setOrders(JSON.parse(ordersFromCookie));
-    }
-  }, []);
-
-  useEffect(() => {
-    // Charger les commandes de sessionStorage
-    const storedOrders = sessionStorage.getItem('orders');
-    if (storedOrders) {
-      setOrders(JSON.parse(storedOrders));
-    }
-  }, []);
   return (
     <div style={commonStyles.pageContainer}>
       <div style={commonStyles.contentContainer}>
@@ -90,76 +86,62 @@ const OrderComponent = () => {
           Commander un poulet
         </button>
         <div>
-      <h3>Commandes de la session :</h3>
-      <ul>
-        {orders.map((orderId, index) => (
-          <li key={index}>ID de la commande: {orderId}</li>
-        ))}
-      </ul>
-    </div>
-
-
-
-
-
-
+          <h3>Commandes de la session :</h3>
+          <ul>
+            {orders.map((orderId, index) => (
+              <li key={index}>ID de la commande: {orderId}</li>
+            ))}
+          </ul>
+        </div>
       </div>
       <div style={commonStyles.pageContainer}>
-      <div style={commonStyles.contentContainer}>
-                {/* Nouveau champ de saisie pour le numéro de commande */}
-                <input
-          type="text"
-          value={orderNumber}
-          onChange={(e) => setOrderNumber(e.target.value)}
-          placeholder="Entrez le numéro de votre commande"
-          style={commonStyles.input}
-        />
-
-        {/* Bouton pour consulter le statut de la commande */}
-        <button style={commonStyles.button} onClick={handleStatusCheck}>
-          Consulter le statut de la commande
-        </button>
-
-        {/* Message de statut */}
-        {orderStatus && (
-          <div style={commonStyles.statusMessage}>
-            Statut de la commande: {orderStatus}
-          </div>
-        )}
+        <div style={commonStyles.contentContainer}>
+          <input
+            type="text"
+            value={orderNumber}
+            onChange={(e) => setOrderNumber(e.target.value)}
+            placeholder="Entrez le numéro de votre commande"
+            style={commonStyles.input}
+          />
+          <button style={commonStyles.button} onClick={handleStatusCheck}>
+            Consulter le statut de la commande
+          </button>
+          {orderStatus && (
+            <div style={commonStyles.statusMessage}>
+              Statut de la commande: {orderStatus}
+            </div>
+          )}
         </div>
-        </div>
+      </div>
       <div style={commonStyles.pageContainer}>
-      <div style={commonStyles.contentContainer}>
-                {/* Lien ou bouton pour afficher le formulaire de connexion */}
-                <div onClick={() => setShowLogin(!showLogin)} style={commonStyles.button}>
-                {showLogin ? 'Fermer la connexion' : 'Accès restaurateur'}
+        <div style={commonStyles.contentContainer}>
+          <div onClick={() => setShowLogin(!showLogin)} style={commonStyles.button}>
+            {showLogin ? 'Fermer la connexion' : 'Accès restaurateur'}
           </div>
-                {/* Formulaire de connexion */}
-                {showLogin && (
-          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column' }}>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Nom d'utilisateur"
-              style={commonStyles.input}
-            />
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Mot de passe"
-              style={commonStyles.input}
-            />
-            <button type="submit" style={commonStyles.button}>
-              Se connecter
-            </button>
-          </form>
-        )}
+          {showLogin && (
+            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column' }}>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Nom d'utilisateur"
+                style={commonStyles.input}
+              />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Mot de passe"
+                style={commonStyles.input}
+              />
+              <button type="submit" style={commonStyles.button}>
+                Se connecter
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </div>
-    
   );
 };
 
